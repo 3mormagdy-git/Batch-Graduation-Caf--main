@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme inline {
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-card-border: rgba(122, 37, 64, 0.10);
+  --color-pill-border: rgba(122, 37, 64, 0.14);
+  --color-divider: var(--divider);
+  --color-text: var(--text);
+  --color-muted: #8B8580;
+  --color-ink: #1C0A10;
+  --color-accent: #78263D;
+  --color-accent-hover: #5F1D30;
+  --color-link: var(--link);
+  --color-pink: var(--pink);
+  --color-mint: #E6F6EF;
+  --color-green: #1F8A6B;
+  --color-lilac: #E6DDF2;
+  --color-lavender: var(--lavender);
+  --color-amber: var(--amber);
+  --color-amber-dark: var(--amber-dark);
+  --color-beige: var(--beige);
+  --color-chip-grey: var(--chip-grey);
+  --color-split: var(--split);
+  --color-danger: var(--danger);
+  --font-sans: Inter, system-ui, sans-serif;
+}
+
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--text);
+  background: var(--page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --accent: #78263D;
+  --accent-hover: #5F1D30;
+  --ink: #1C0A10;
+  --text: #2B1F24;
+  --muted: #8A7F83;
+  --link: #7A6B70;
+  --page: #F4F1EA;
+  --card: #FFFFFF;
+  --card-border: rgba(122, 37, 64, 0.10);
+  --pill-border: rgba(122, 37, 64, 0.14);
+  --divider: #EDE6E2;
+  --pink: #F9E7EA;
+  --mint: #E6F6EF;
+  --green: #1F8A6B;
+  --lilac: #E6DDF2;
+  --lavender: #8C7BD8;
+  --amber: #DC9A33;
+  --amber-dark: #D4820F;
+  --beige: #F1E8E2;
+  --chip-grey: #EDE9E6;
+  --split: #B9A5AB;
+  --danger: #C23845;
+
+  --bg: var(--page);
+  --surface: var(--card);
+  --border: var(--divider);
+  --primary: var(--ink);
+  --teal: var(--green);
+  --forest: var(--green);
+  --mauve: var(--accent);
+  --grey-chip: var(--chip-grey);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.topbar-actions .primary-button {
+  background: var(--accent);
+  color: #fff;
+}
+
+.topbar-actions .primary-button:hover {
+  background: var(--accent-hover);
+}
+
+.dashboard-main .chart-hairline {
+  stroke: rgb(120 38 61 / 35%);
+}
