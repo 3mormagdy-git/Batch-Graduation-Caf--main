@@ -9,9 +9,9 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#f8f3ed]">
+    <div className="min-h-screen bg-page">
       <Sidebar expanded={sidebarOpen} onToggle={() => setSidebarOpen((v) => !v)} />
-      <div className={`pl-14 transition-all duration-200 ${sidebarOpen ? 'md:pl-56' : 'md:pl-[72px]'}`}>
+      <div className={`pl-14 transition-[padding] duration-200 ${sidebarOpen ? 'md:pl-56' : 'md:pl-[72px]'}`}>
         <Navbar />
         <main className="px-4 pb-16 pt-8">
           <AddProduct onBackToCatalog={() => {}} />

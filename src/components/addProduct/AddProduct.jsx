@@ -43,11 +43,19 @@ export default function AddProduct({ onBackToCatalog, onProductAdded }) {
     });
   };
 
+  // Bring the new step into view when the user moves between steps.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   // Run the validator of one step; returns true when the step is valid.
+  // On failure, focus moves to the first invalid field once the errors have rendered.
   const validateStep = (index) => {
     const found = VALIDATORS[index](product);
     setErrors(found);
-    return Object.keys(found).length === 0;
+    const valid = Object.keys(found).length === 0;
+    if (!valid) setTimeout(() => document.querySelector('[aria-invalid="true"]')?.focus(), 0);
+    return valid;
   };
 
   // Validate a single field when the user leaves it (onBlur).
@@ -111,18 +119,18 @@ export default function AddProduct({ onBackToCatalog, onProductAdded }) {
   const handlePrimary = () => (isLast ? handleSave() : validateStep(step) && setStep(step + 1));
   const handleSecondary = () => (step === 0 ? handleCancel() : goToStep(step - 1));
 
-  const btnBase = 'h-9 rounded-lg px-4 text-[12px] font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#78283f]/40';
+  const btnBase = 'h-10 rounded-lg px-4 text-[14px] transition enabled:active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40';
 
   return (
     <div className="mx-auto w-full max-w-[960px]">
-      <button type="button" onClick={onBackToCatalog} className="mb-2 flex items-center gap-1 text-[12px] text-[#6b5f5b] hover:text-[#2a1f1f]">
+      <button type="button" onClick={onBackToCatalog} className="mb-2 flex items-center gap-1 text-[12px] text-[#6b5f5b] hover:text-ink">
         <ChevronLeft size={13} /> Menu catalog
       </button>
       <h1 className="text-[22px] font-bold leading-tight">Add product</h1>
-      <p className="mb-5 mt-1 text-[12px] text-[#8a7f7a]">Products sync to every POS terminal as soon as you save.</p>
+      <p className="mb-5 mt-1 text-[12px] text-muted">Products sync to every POS terminal as soon as you save.</p>
 
       {/* Stepper */}
-      <ol className="mb-4 grid grid-cols-3 gap-3">
+      <ol className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3" aria-label="Progress">
         {STEPS.map((label, i) => {
           const done = i < step;
           const active = i === step;
@@ -132,14 +140,14 @@ export default function AddProduct({ onBackToCatalog, onProductAdded }) {
                 type="button"
                 onClick={() => goToStep(i)}
                 aria-current={active ? 'step' : undefined}
-                className={`flex h-10 w-full items-center gap-2 rounded-lg border px-3 text-left text-[12px] font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#78283f]/40 ${
-                  active ? 'border-[#78283f] bg-[#f9edf1] text-[#78283f]' : done ? 'border-[#ebe6df] bg-white text-[#3b8a6e]' : 'border-[#ebe6df] bg-white text-[#9a8f8a]'
+                className={`flex h-[43px] w-full items-center gap-2 rounded-lg border px-3 text-left text-[13px] font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                  active ? 'border-primary bg-primary-soft text-primary' : done ? 'border-line bg-white text-success hover:border-success' : 'border-line bg-white text-muted'
                 }`}
               >
-                <span className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[10px] ${
-                  active ? 'bg-[#78283f] text-white' : done ? 'bg-[#3b8a6e] text-white' : 'bg-[#f1ebe4] text-[#9a8f8a]'
+                <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] ${
+                  active ? 'bg-primary text-white' : done ? 'bg-success text-white' : 'bg-sand text-muted'
                 }`}>
-                  {done ? <Check size={11} strokeWidth={3} /> : i + 1}
+                  {done ? <Check size={12} strokeWidth={3} /> : i + 1}
                 </span>
                 <span className="truncate">{label}</span>
               </button>
@@ -154,17 +162,17 @@ export default function AddProduct({ onBackToCatalog, onProductAdded }) {
 
       {/* Footer buttons */}
       <div className="mt-5 flex items-center justify-between">
-        <button type="button" onClick={handleSecondary} disabled={saving} className={`${btnBase} border border-[#ebe6df] bg-white text-[#2a1f1f] hover:bg-[#faf7f3] disabled:opacity-50`}>
+        <button type="button" onClick={handleSecondary} disabled={saving} className={`${btnBase} border border-line bg-white font-semibold text-ink hover:bg-page disabled:opacity-50`}>
           {step === 0 ? 'Cancel' : 'Back'}
         </button>
-        <button type="button" onClick={handlePrimary} disabled={saving} className={`${btnBase} bg-[#78283f] text-white hover:bg-[#66222f] disabled:opacity-60`}>
+        <button type="button" onClick={handlePrimary} disabled={saving} className={`${btnBase} bg-primary font-medium text-white hover:bg-primary-hover disabled:opacity-60`}>
           {saving ? 'Saving…' : isLast ? 'Save Product' : 'Continue'}
         </button>
       </div>
 
       {/* Simple feedback message (not in the reference; needed for success/error feedback) */}
       {toast && (
-        <div role="status" className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-4 py-3 text-[12px] font-medium text-white shadow-lg ${toast.type === 'success' ? 'bg-[#3b8a6e]' : 'bg-red-600'}`}>
+        <div role="status" className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-lg px-4 py-3 text-[12px] font-medium text-white shadow-lg ${toast.type === 'success' ? 'bg-success' : 'bg-danger'}`}>
           {toast.message}
         </div>
       )}

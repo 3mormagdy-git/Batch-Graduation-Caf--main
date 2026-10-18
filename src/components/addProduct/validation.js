@@ -48,12 +48,9 @@ export function validateBranches(p) {
       errors[`branch-${id}`] = 'Enter a valid price';
     }
   });
-
-
-
-  
   return errors;
 }
+
 // Cleans what the user types in a price field: Arabic digits -> 0-9,
 // "," or Arabic decimal mark -> ".", removes any other character
 // and keeps at most 2 decimals.
@@ -66,4 +63,5 @@ export function normalizePriceInput(raw) {
   const [int, ...rest] = v.split('.');
   return rest.length ? `${int}.${rest.join('').slice(0, 2)}` : int;
 }
+
 export const VALIDATORS = [validateDetails, validateOptions, validateBranches];

@@ -2,6 +2,7 @@ import { useDropzone } from 'react-dropzone';
 import { Field, CardHeader, inputClass } from './fields';
 import { CATEGORIES, KITCHEN_STATIONS, LIBRARY_IMAGES } from '../../data/productOptions';
 import { normalizePriceInput } from './validation';
+
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB: uploaded images are stored in localStorage for now
 
 // Step 1: basic product info + picture.
@@ -27,9 +28,11 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
   });
 
   const isUploaded = Boolean(product.imageName);
+  // Library pictures are bundled files, so their internal path is not shown in the URL field.
+  const isLibraryImage = LIBRARY_IMAGES.some((img) => img.src === product.imageUrl);
 
   return (
-    <section className="rounded-xl border border-[#ebe6df] bg-white p-5" aria-labelledby="details-title">
+    <section className="rounded-xl border border-line bg-white p-5" aria-labelledby="details-title">
       <CardHeader id="details-title" title="Product details" />
 
       <div className="grid gap-5 md:grid-cols-[132px_1fr]">
@@ -37,15 +40,15 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
         <div>
           <div
             {...getRootProps()}
-            className={`relative flex h-[132px] w-[132px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-[#f1ebe4] ring-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#78283f] ${
-              isDragActive ? 'ring-2 ring-[#78283f]' : ''
+            className={`relative flex h-[132px] w-[132px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-sand ring-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              isDragActive ? 'ring-2 ring-primary' : ''
             }`}
           >
             <input {...getInputProps()} aria-label="Upload product image" />
             {product.imageUrl && <img src={product.imageUrl} alt="Product preview" className="h-full w-full object-cover" />}
           </div>
 
-          <p className="mb-2 mt-3 text-[11px] font-semibold text-[#2a1f1f]">Choose from library</p>
+          <p className="mb-2 mt-3 text-[11px] font-semibold text-ink">Choose from library</p>
           <div className="grid grid-cols-4 gap-1.5">
             {LIBRARY_IMAGES.map((img) => {
               const selected = product.imageUrl === img.src;
@@ -59,8 +62,8 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
                     update('imageUrl', img.src);
                     update('imageName', '');
                   }}
-                  className={`h-[28px] w-[28px] overflow-hidden rounded-md border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#78283f]/40 ${
-                    selected ? 'border-[#2a1f1f]' : 'border-transparent'
+                  className={`h-[28px] w-[28px] overflow-hidden rounded-md border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                    selected ? 'border-ink' : 'border-transparent'
                   }`}
                 >
                   <img src={img.src} alt="" className="h-full w-full object-cover" />
@@ -126,20 +129,20 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
 
             <Field id="basePrice" label="Base price" required error={errors.basePrice}>
               <div className="relative">
-              <input
-  id="basePrice"
-  type="text"
-  inputMode="decimal"
-  dir="ltr"
-  className={`${inputClass(errors.basePrice)} pr-12`}
-  placeholder="0.00"
-  value={product.basePrice}
-  onChange={(e) => update('basePrice', normalizePriceInput(e.target.value))}
-  onBlur={() => onBlurField('basePrice')}
-  aria-invalid={Boolean(errors.basePrice)}
-  aria-describedby={errors.basePrice ? 'basePrice-error' : undefined}
-/>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-[#9a8f8a]">EGP</span>
+                <input
+                  id="basePrice"
+                  type="text"
+                  inputMode="decimal"
+                  dir="ltr"
+                  className={`${inputClass(errors.basePrice)} pr-12`}
+                  placeholder="0.00"
+                  value={product.basePrice}
+                  onChange={(e) => update('basePrice', normalizePriceInput(e.target.value))}
+                  onBlur={() => onBlurField('basePrice')}
+                  aria-invalid={Boolean(errors.basePrice)}
+                  aria-describedby={errors.basePrice ? 'basePrice-error' : undefined}
+                />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-muted">EGP</span>
               </div>
             </Field>
 
@@ -161,7 +164,7 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
               id="imageUrl"
               className={inputClass(false)}
               // Uploaded files are data URLs (very long), so show the file name instead.
-              value={isUploaded ? `Uploaded: ${product.imageName}` : product.imageUrl.startsWith('data:') ? '' : product.imageUrl}
+              value={isUploaded ? `Uploaded: ${product.imageName}` : isLibraryImage || product.imageUrl.startsWith('data:') ? '' : product.imageUrl}
               onChange={(e) => {
                 update('imageUrl', e.target.value);
                 update('imageName', '');
