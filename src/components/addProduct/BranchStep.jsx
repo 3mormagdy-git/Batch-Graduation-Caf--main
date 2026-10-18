@@ -1,5 +1,5 @@
-import { CardHeader, Toggle, inputClass } from './fields';
-import { BRANCHES } from '../../data/productOptions';
+import { CardHeader, Toggle, inputClass } from '@/components/addProduct/fields.jsx';
+import { BRANCHES } from '@/data/productOptions.js';
 
 // Step 3: which branches sell the product and at what price.
 export default function BranchStep({ product, errors, update }) {

@@ -1,4 +1,4 @@
-import { getProducts } from '../../services/productService';
+import { getProducts } from '@/services/productService.js';
 
 // Client-side validation. Each function returns an object { fieldName: message }.
 // An empty object means the step is valid.
@@ -24,6 +24,13 @@ export function validateBasePrice(value) {
   return '';
 }
 
+// Image URL is optional: library pictures and uploads are fine, a typed value must be a web address.
+export function validateImageUrl(value) {
+  const v = value.trim();
+  if (!v || v.startsWith('data:') || v.startsWith('/')) return '';
+  return /^https?:\/\/\S+$/i.test(v) ? '' : 'Enter a full image URL (https://…)';
+}
+
 export function validateDetails(p) {
   const errors = {};
   if (!p.name.trim()) errors.name = 'Product name is required';
@@ -32,6 +39,8 @@ export function validateDetails(p) {
   if (skuError) errors.sku = skuError;
   const priceError = validateBasePrice(p.basePrice);
   if (priceError) errors.basePrice = priceError;
+  const imageError = validateImageUrl(p.imageUrl);
+  if (imageError) errors.imageUrl = imageError;
   return errors;
 }
 

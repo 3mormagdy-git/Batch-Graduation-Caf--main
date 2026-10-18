@@ -1,5 +1,5 @@
-import { CardHeader } from './fields';
-import { PRODUCT_TYPES, SIZES, ADDONS } from '../../data/productOptions';
+import { CardHeader } from '@/components/addProduct/fields.jsx';
+import { PRODUCT_TYPES, SIZES, ADDONS } from '@/data/productOptions.js';
 
 // Selected chips/cards get the pink background + maroon border from the reference.
 const selectedClass = 'border-primary bg-primary-soft text-primary';

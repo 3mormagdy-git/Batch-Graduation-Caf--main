@@ -1,15 +1,15 @@
-import lib1 from '../assets/library/1.jpg';
-import lib2 from '../assets/library/2.jpg';
-import lib3 from '../assets/library/3.jpg';
-import lib4 from '../assets/library/4.jpg';
-import lib5 from '../assets/library/5.jpg';
-import lib6 from '../assets/library/6.jpg';
-import lib7 from '../assets/library/7.jpg';
-import lib8 from '../assets/library/8.jpg';
-import lib9 from '../assets/library/9.jpg';
-import lib10 from '../assets/library/10.jpg';
-import lib11 from '../assets/library/11.jpg';
-import lib12 from '../assets/library/12.jpg';
+import lib1 from '@/assets/library/1.jpg';
+import lib2 from '@/assets/library/2.jpg';
+import lib3 from '@/assets/library/3.jpg';
+import lib4 from '@/assets/library/4.jpg';
+import lib5 from '@/assets/library/5.jpg';
+import lib6 from '@/assets/library/6.jpg';
+import lib7 from '@/assets/library/7.jpg';
+import lib8 from '@/assets/library/8.jpg';
+import lib9 from '@/assets/library/9.jpg';
+import lib10 from '@/assets/library/10.jpg';
+import lib11 from '@/assets/library/11.jpg';
+import lib12 from '@/assets/library/12.jpg';
 
 // Mock data for the Add Product form. Everything here is temporary:
 // when the backend is ready these lists should come from API calls.

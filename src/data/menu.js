@@ -1,0 +1,17 @@
+export const menuItems = [
+  { sku: 'HC-001', category: 'Hot Coffee', name: 'Spanish Latte', price: 120, image: '/images/menu/spanish-latte.jpg', available: true },
+  { sku: 'HC-002', category: 'Hot Coffee', name: 'Flat White', price: 95, image: '/images/menu/flat-white.jpg', available: true },
+  { sku: 'HC-003', category: 'Hot Coffee', name: 'V60 Specialty Pour Over', price: 150, image: '/images/menu/v60-pour-over.jpg', available: true },
+  { sku: 'HC-004', category: 'Hot Coffee', name: 'Cappuccino', price: 90, image: '/images/menu/cappuccino.jpg', available: true },
+  { sku: 'IC-001', category: 'Iced Drinks', name: 'Iced Pistachio Latte', price: 160, image: '/images/menu/iced-pistachio-latte.jpg', available: true },
+  { sku: 'IC-002', category: 'Iced Drinks', name: 'Cold Brew Hibiscus', price: 90, image: '/images/menu/cold-brew-hibiscus.jpg', available: true },
+  { sku: 'IC-003', category: 'Iced Drinks', name: 'Iced Caramel Macchiato', price: 135, image: '/images/menu/iced-caramel-macchiato.jpg', available: true },
+  { sku: 'BK-001', category: 'Bakery', name: 'Almond Butter Croissant', price: 95, image: '/images/menu/almond-croissant.jpg', available: false },
+  { sku: 'BK-002', category: 'Bakery', name: 'Halloumi Brioche Toast', price: 145, image: '/images/menu/halloumi-toast.jpg', available: true },
+  { sku: 'BK-003', category: 'Bakery', name: 'Zaatar Cheese Croissant', price: 85, image: '/images/menu/zaatar-croissant.jpg', available: true },
+  { sku: 'DS-001', category: 'Desserts', name: 'San Sebastian Cheesecake', price: 185, image: '/images/menu/san-sebastian-cheesecake.jpg', available: true },
+  { sku: 'DS-002', category: 'Desserts', name: 'Salted Caramel Brownie', price: 85, image: '/images/menu/salted-caramel-brownie.jpg', available: true },
+  { sku: 'DS-003', category: 'Desserts', name: 'Pistachio Kunafa Tart', price: 150, image: '/images/menu/pistachio-kunafa-tart.jpg', available: false },
+  { sku: 'SS-001', category: 'Seasonal Specials', name: 'Rose Cardamom Latte', price: 130, image: '/images/menu/rose-cardamom-latte.jpg', available: true },
+  { sku: 'SS-002', category: 'Seasonal Specials', name: 'Mango Passion Cold Foam', price: 145, image: '/images/menu/mango-passion-cold-foam.jpg', available: true },
+]

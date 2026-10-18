@@ -1,5 +1,8 @@
 // Small shared form pieces used by the three steps.
 
+// Shared class string for every input in the form. It lives next to the field components
+// it styles; the only cost of exporting it here is a full reload instead of hot reload.
+// eslint-disable-next-line react-refresh/only-export-components
 export const inputClass = (hasError) =>
   `h-10 w-full rounded-lg border bg-white px-3 text-[13px] text-ink outline-none transition placeholder:text-[#b5aaa4] focus:border-primary focus:ring-2 focus:ring-primary/15 ${
     hasError ? 'border-danger' : 'border-line'

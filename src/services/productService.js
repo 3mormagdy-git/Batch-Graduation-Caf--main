@@ -8,7 +8,7 @@ const STORAGE_KEY = 'restaurant_products';
 export function getProducts() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch (e) {
+  } catch {
     return [];
   }
 }
@@ -22,7 +22,7 @@ export function addProduct(product) {
         const saved = { ...product, id: `p_${Date.now()}`, createdAt: new Date().toISOString() };
         localStorage.setItem(STORAGE_KEY, JSON.stringify([...getProducts(), saved]));
         resolve(saved);
-      } catch (e) {
+      } catch {
         // e.g. storage full (large uploaded images are stored as data URLs)
         reject(new Error('Could not save the product. Please try again.'));
       }

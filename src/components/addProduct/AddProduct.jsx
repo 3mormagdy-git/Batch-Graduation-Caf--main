@@ -1,23 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Check, ChevronLeft } from 'lucide-react';
-import DetailsStep from './DetailsStep';
-import OptionsStep from './OptionsStep';
-import BranchStep from './BranchStep';
-import { VALIDATORS, validateDetails } from './validation';
-import { createEmptyProduct } from '../../data/productOptions';
-import { addProduct } from '../../services/productService';
+import { useNavigate } from 'react-router-dom';
+import DetailsStep from '@/components/addProduct/DetailsStep.jsx';
+import OptionsStep from '@/components/addProduct/OptionsStep.jsx';
+import BranchStep from '@/components/addProduct/BranchStep.jsx';
+import { VALIDATORS, validateDetails } from '@/components/addProduct/validation.js';
+import { createEmptyProduct } from '@/data/productOptions.js';
+import { addProduct } from '@/services/productService.js';
 
 const STEPS = ['Details', 'Options', 'Branch availability'];
 
 // Add Product wizard (3 steps). This component owns ALL form state; the step
 // components only display it and call `update` when something changes.
 //
+// "Menu catalog" and "Cancel" go back to the Menu Catalog page (/menu).
+//
 // Props:
-//   onBackToCatalog() - called by "Menu catalog" link and "Cancel". Connect it
-//                       to the Menu Catalog page when it exists.
 //   onProductAdded(product) - optional; called with the saved product so the
 //                       Menu Catalog / Dashboard can refresh their data.
-export default function AddProduct({ onBackToCatalog, onProductAdded }) {
+export default function AddProduct({ onProductAdded }) {
+  const navigate = useNavigate();
+  const backToCatalog = () => navigate('/menu');
   const [step, setStep] = useState(0);
   const [product, setProduct] = useState(createEmptyProduct);
   const [errors, setErrors] = useState({});
@@ -90,7 +93,7 @@ export default function AddProduct({ onBackToCatalog, onProductAdded }) {
 
   const handleCancel = () => {
     reset();
-    if (onBackToCatalog) onBackToCatalog();
+    backToCatalog();
   };
 
   const handleSave = async () => {
@@ -122,8 +125,8 @@ export default function AddProduct({ onBackToCatalog, onProductAdded }) {
   const btnBase = 'h-10 rounded-lg px-4 text-[14px] transition enabled:active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40';
 
   return (
-    <div className="mx-auto w-full max-w-[960px]">
-      <button type="button" onClick={onBackToCatalog} className="mb-2 flex items-center gap-1 text-[12px] text-[#6b5f5b] hover:text-ink">
+    <div className="mx-auto w-full max-w-[1008px] px-6 pb-16 pt-8">
+      <button type="button" onClick={backToCatalog} className="mb-2 flex items-center gap-1 text-[12px] text-[#6b5f5b] hover:text-ink">
         <ChevronLeft size={13} /> Menu catalog
       </button>
       <h1 className="text-[22px] font-bold leading-tight">Add product</h1>

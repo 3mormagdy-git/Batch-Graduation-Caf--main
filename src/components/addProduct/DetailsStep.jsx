@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Field, CardHeader, inputClass } from './fields';
-import { CATEGORIES, KITCHEN_STATIONS, LIBRARY_IMAGES } from '../../data/productOptions';
-import { normalizePriceInput } from './validation';
+import { Field, CardHeader, inputClass } from '@/components/addProduct/fields.jsx';
+import { CATEGORIES, KITCHEN_STATIONS, LIBRARY_IMAGES } from '@/data/productOptions.js';
+import { normalizePriceInput } from '@/components/addProduct/validation.js';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB: uploaded images are stored in localStorage for now
 
@@ -27,6 +28,10 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
     },
   });
 
+  // Remember which address failed to load so the preview shows the empty box, not a broken image.
+  const [failedImage, setFailedImage] = useState(null);
+  const showPreview = product.imageUrl && failedImage !== product.imageUrl;
+
   const isUploaded = Boolean(product.imageName);
   // Library pictures are bundled files, so their internal path is not shown in the URL field.
   const isLibraryImage = LIBRARY_IMAGES.some((img) => img.src === product.imageUrl);
@@ -45,7 +50,9 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
             }`}
           >
             <input {...getInputProps()} aria-label="Upload product image" />
-            {product.imageUrl && <img src={product.imageUrl} alt="Product preview" className="h-full w-full object-cover" />}
+            {showPreview && (
+              <img src={product.imageUrl} alt="Product preview" className="h-full w-full object-cover" onError={() => setFailedImage(product.imageUrl)} />
+            )}
           </div>
 
           <p className="mb-2 mt-3 text-[11px] font-semibold text-ink">Choose from library</p>
@@ -159,10 +166,13 @@ export default function DetailsStep({ product, errors, update, onBlurField, onIm
             </Field>
           </div>
 
-          <Field id="imageUrl" label="Image URL" hint="Paste a hosted image or pick from the library">
+          <Field id="imageUrl" label="Image URL" hint="Paste a hosted image or pick from the library" error={errors.imageUrl}>
             <input
               id="imageUrl"
-              className={inputClass(false)}
+              className={inputClass(errors.imageUrl)}
+              onBlur={() => onBlurField('imageUrl')}
+              aria-invalid={Boolean(errors.imageUrl)}
+              aria-describedby={errors.imageUrl ? 'imageUrl-error' : undefined}
               // Uploaded files are data URLs (very long), so show the file name instead.
               value={isUploaded ? `Uploaded: ${product.imageName}` : isLibraryImage || product.imageUrl.startsWith('data:') ? '' : product.imageUrl}
               onChange={(e) => {
