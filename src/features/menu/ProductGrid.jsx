@@ -1,4 +1,4 @@
-import ProductCard from './ProductCard.jsx'
+import ProductCard from '@/features/menu/ProductCard.jsx'
 
 export default function ProductGrid({ products, view, availability, onToggleAvailability }) {
   if (products.length === 0) {

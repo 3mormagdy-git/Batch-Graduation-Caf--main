@@ -1,19 +1,20 @@
 import { useMemo, useState } from 'react'
 import { Info, Search } from 'lucide-react'
-import { menuItems } from '../../data/menu.js'
-import CategoryTabs from './CategoryTabs.jsx'
-import PageHeader from './PageHeader.jsx'
-import ProductGrid from './ProductGrid.jsx'
-import ViewToggle from './ViewToggle.jsx'
-import './MenuPage.css'
+import { menuItems } from '@/data/menu.js'
+import CategoryTabs from '@/features/menu/CategoryTabs.jsx'
+import PageHeader from '@/features/menu/PageHeader.jsx'
+import ProductGrid from '@/features/menu/ProductGrid.jsx'
+import ViewToggle from '@/features/menu/ViewToggle.jsx'
+import '@/features/menu/MenuPage.css'
+
+const categoryNames = ['Hot Coffee', 'Iced Drinks', 'Seasonal Specials', 'Bakery', 'Desserts']
 
 const categories = [
-  { name: 'All', count: 15 },
-  { name: 'Hot Coffee', count: 4 },
-  { name: 'Iced Drinks', count: 3 },
-  { name: 'Seasonal Specials', count: 2 },
-  { name: 'Bakery', count: 3 },
-  { name: 'Desserts', count: 3 },
+  { name: 'All', count: menuItems.length },
+  ...categoryNames.map((name) => ({
+    name,
+    count: menuItems.filter((item) => item.category === name).length,
+  })),
 ]
 
 export default function MenuPage() {
@@ -34,13 +35,15 @@ export default function MenuPage() {
     ))
   }, [category, query])
 
+  const unavailableCount = Object.values(availability).filter((available) => !available).length
+
   const toggleAvailability = (sku) => {
     setAvailability((current) => ({ ...current, [sku]: !current[sku] }))
   }
 
   return (
     <div className="menu-page">
-      <PageHeader />
+      <PageHeader productCount={menuItems.length} unavailableCount={unavailableCount} />
       <div className="menu-toolbar">
         <CategoryTabs categories={categories} selected={category} onSelect={setCategory} />
         <div className="menu-toolbar-actions">

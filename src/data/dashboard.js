@@ -1,6 +1,6 @@
 export const kpis = [
   { label: 'TOTAL GROSS SALES', value: 42850, unit: 'EGP', icon: 'wallet', tone: 'pink', change: '+14.2%', changeTone: 'mint', detail: 'vs. yesterday (37,520 EGP)' },
-  { label: 'TOTAL ORDERS FULFILLED', value: 168, unit: 'Orders', icon: 'orders', tone: 'mint', change: 'Daily Target: 200', changeTone: 'grey', detail: '84% achieved' },
+  { label: 'TOTAL ORDERS FULFILLED', value: 168, unit: 'Orders', icon: 'orders', tone: 'mint', change: 'Daily Target: 200', changeTone: 'grey', detail: '84% achieved', detailTone: 'accent' },
   { label: 'AVERAGE ORDER VALUE', value: 255, unit: 'EGP', icon: 'bag', tone: 'beige', change: '+8.5%', changeTone: 'mint', detail: 'upsell peak post-lunch' },
   { label: 'OCCUPIED FLOOR TABLES', value: '6 / 8', unit: 'Tables', icon: 'chair', tone: 'cream', change: '75% Occupancy', changeTone: 'occupancy', detail: '2 tables vacant' },
 ]

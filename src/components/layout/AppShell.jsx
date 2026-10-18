@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
-import Header from './Header.jsx'
-import Sidebar from './Sidebar.jsx'
+import Header from '@/components/layout/Header.jsx'
+import Sidebar from '@/components/layout/Sidebar.jsx'
 
 export default function AppShell() {
   return (

@@ -42,7 +42,7 @@
   --text: #2B1F24;
   --muted: #8A7F83;
   --link: #7A6B70;
-  --page: #F4F1EA;
+  --page: #F8F3ED;
   --card: #FFFFFF;
   --card-border: rgba(122, 37, 64, 0.10);
   --pill-border: rgba(122, 37, 64, 0.14);
@@ -58,15 +58,18 @@
   --chip-grey: #EDE9E6;
   --split: #B9A5AB;
   --danger: #C23845;
+  --accent-soft: #F8EEF1;
+  --sand-light: #F9F5F1;
+  --line: #E8DFDA;
+  --nav-text: rgb(48 36 42 / 80%);
+  --focus-ring: 0 0 0 3px rgb(120 38 61 / 25%);
 
   --bg: var(--page);
   --surface: var(--card);
   --border: var(--divider);
   --primary: var(--ink);
   --teal: var(--green);
-  --forest: var(--green);
   --mauve: var(--accent);
-  --grey-chip: var(--chip-grey);
 }
 
 * {
@@ -101,17 +104,4 @@ a:focus-visible,
 input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-.topbar-actions .primary-button {
-  background: var(--accent);
-  color: #fff;
-}
-
-.topbar-actions .primary-button:hover {
-  background: var(--accent-hover);
-}
-
-.dashboard-main .chart-hairline {
-  stroke: rgb(120 38 61 / 35%);
 }

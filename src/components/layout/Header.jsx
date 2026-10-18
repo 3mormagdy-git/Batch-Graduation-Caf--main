@@ -26,7 +26,7 @@ export default function Header() {
           <Bell size={20} strokeWidth={1.8} />
           <span className="notification-count">2</span>
         </button>
-        <button className="primary-button bg-accent hover:bg-accent-hover text-white" type="button">
+        <button className="primary-button" type="button">
           <CirclePlus size={18} strokeWidth={1.8} />
           New order
         </button>

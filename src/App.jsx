@@ -17,10 +17,10 @@ import {
   recentOrders,
   salesTrend,
   staffOnShift,
-} from './data/dashboard.js'
-import AppShell from './components/layout/AppShell.jsx'
-import MenuPage from './features/menu/MenuPage.jsx'
-import './App.css'
+} from '@/data/dashboard.js'
+import AppShell from '@/components/layout/AppShell.jsx'
+import MenuPage from '@/features/menu/MenuPage.jsx'
+import '@/App.css'
 
 const kpiIcons = { wallet: Banknote, orders: Receipt, bag: ShoppingBag, chair: Landmark }
 const formatNumber = (value) => Number(value).toLocaleString('en-US')
@@ -91,7 +91,7 @@ function KpiCard({ item }) {
             {item.changeTone === 'mint' && <TrendingUp size={12} strokeWidth={2} />}
             {item.change}
           </span>}
-        <span className={`kpi-detail${item.label === 'TOTAL ORDERS FULFILLED' ? ' accent' : ''}`}>{item.detail}</span>
+        <span className={`kpi-detail${item.detailTone === 'accent' ? ' accent' : ''}`}>{item.detail}</span>
       </div>
     </Card>
   )
@@ -129,12 +129,11 @@ function SalesTrendChart({ range }) {
     [87, isSixMonths ? 390 : 43],
     [100, isSixMonths ? 390 : 43],
   ]
-  const areaPath = areaValues
+  const toPath = (values) => values
     .map(([percentage, value], index) => `${index === 0 ? 'M' : 'L'} ${x(percentage)} ${y(value)}`)
     .join(' ')
-  const comparisonPath = comparisonValues
-    .map(([percentage, value], index) => `${index === 0 ? 'M' : 'L'} ${x(percentage)} ${y(value)}`)
-    .join(' ')
+  const areaPath = toPath(areaValues)
+  const comparisonPath = toPath(comparisonValues)
   const safeActiveIndex = Math.min(activeIndex, bands.length - 1)
   const activePoint = bands[safeActiveIndex]
   const activePercentage = ((safeActiveIndex + 0.5) / bands.length) * 100
@@ -177,15 +176,15 @@ function SalesTrendChart({ range }) {
         {bands.map((point, index) => (
           <g key={point.day} onMouseEnter={() => !isSixMonths && setActiveIndex(index)}>
             <rect x={chart.left + index * ((chart.right - chart.left) / bands.length)} y={chart.top} width={(chart.right - chart.left) / bands.length} height={chart.bottom - chart.top + 36} fill="transparent" />
-            {!isSixMonths && index === activeIndex && <circle cx={point.x} cy={selectedY} r="3" className="chart-active-dot" />}
+            {!isSixMonths && index === safeActiveIndex && <circle cx={point.x} cy={selectedY} r="3" className="chart-active-dot" />}
             <text x={point.x} y="286" textAnchor="middle" className="chart-axis-label">{point.day}</text>
           </g>
         ))}
         {!isSixMonths && <g className="chart-tooltip" transform={`translate(${tooltipX}, ${tooltipY})`}>
           <rect width="84" height="54" rx="6" />
           <text x="6" y="14" className="tooltip-day">{activePoint.day}</text>
-          <text x="6" y="30" className="tooltip-total">21,200 EGP</text>
-          <text x="6" y="45" className="tooltip-orders">260 Orders</text>
+          <text x="6" y="30" className="tooltip-total">{activePoint.total}</text>
+          <text x="6" y="45" className="tooltip-orders">{activePoint.orders} Orders</text>
         </g>}
       </svg>
     </Card>

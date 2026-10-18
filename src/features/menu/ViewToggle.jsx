@@ -4,7 +4,7 @@ export default function ViewToggle({ view, onChange }) {
   return (
     <div className="menu-view-toggle" role="group" aria-label="Product view">
       <button
-        className={view === 'grid' ? 'active bg-accent hover:bg-accent-hover text-white' : ''}
+        className={view === 'grid' ? 'active' : ''}
         type="button"
         aria-label="Grid view"
         aria-pressed={view === 'grid'}
@@ -13,7 +13,7 @@ export default function ViewToggle({ view, onChange }) {
         <LayoutGrid size={18} strokeWidth={1.8} />
       </button>
       <button
-        className={view === 'list' ? 'active bg-accent hover:bg-accent-hover text-white' : ''}
+        className={view === 'list' ? 'active' : ''}
         type="button"
         aria-label="List view"
         aria-pressed={view === 'list'}

@@ -5,7 +5,7 @@ export default function CategoryTabs({ categories, selected, onSelect }) {
         const active = selected === name
         return (
           <button
-            className={`menu-category-pill${active ? ' active bg-accent hover:bg-accent-hover text-white' : ''}`}
+            className={`menu-category-pill${active ? ' active' : ''}`}
             key={name}
             type="button"
             aria-pressed={active}

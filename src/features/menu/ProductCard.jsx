@@ -1,5 +1,5 @@
-import ProductImage from './ProductImage.jsx'
-import Toggle from '../../components/ui/Toggle.jsx'
+import ProductImage from '@/features/menu/ProductImage.jsx'
+import Toggle from '@/components/ui/Toggle.jsx'
 
 export default function ProductCard({ product, view, available, onToggle }) {
   return (
@@ -15,7 +15,7 @@ export default function ProductCard({ product, view, available, onToggle }) {
         <h2 className="menu-product-name">{product.name}</h2>
         <div className="menu-product-bottom">
           <div className="menu-product-price"><strong>{product.price}</strong><span> EGP</span></div>
-          <Toggle checked={available} onChange={onToggle} />
+          <Toggle checked={available} onChange={onToggle} label={`${product.name} availability`} />
         </div>
       </div>
     </article>
