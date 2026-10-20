@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--text);
+  background: var(--page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --accent: #78263D;
+  --accent-hover: #5F1D30;
+  --ink: #1C0A10;
+  --text: #2B1F24;
+  --muted: #8A7F83;
+  --link: #7A6B70;
+  --page: #F8F3ED;
+  --card: #FFFFFF;
+  --card-border: rgba(122, 37, 64, 0.10);
+  --pill-border: rgba(122, 37, 64, 0.14);
+  --divider: #EDE6E2;
+  --pink: #F9E7EA;
+  --mint: #E6F6EF;
+  --green: #1F8A6B;
+  --lilac: #E6DDF2;
+  --lavender: #8C7BD8;
+  --amber: #DC9A33;
+  --amber-dark: #D4820F;
+  --beige: #F1E8E2;
+  --chip-grey: #EDE9E6;
+  --split: #B9A5AB;
+  --danger: #C23845;
+  --accent-soft: #F8EEF1;
+  --sand-light: #F9F5F1;
+  --line: #E8DFDA;
+  --nav-text: rgb(48 36 42 / 80%);
+  --focus-ring: 0 0 0 3px rgb(120 38 61 / 25%);
+
+  --bg: var(--page);
+  --surface: var(--card);
+  --border: var(--divider);
+  --primary: var(--ink);
+  --teal: var(--green);
+  --mauve: var(--accent);
+}
+
+body {
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+}
+
+/* Element defaults live in the base layer so Tailwind utility classes (used by the
+   Add Product form) can override them; the pages' own CSS classes still win as before. */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  button {
+    color: inherit;
+  }
+
+  svg {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
