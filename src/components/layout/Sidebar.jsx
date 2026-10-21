@@ -23,7 +23,7 @@ const navigation = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/' },
   { label: 'POS', icon: Monitor },
   { label: 'Orders', icon: ClipboardList, notification: true },
-  { label: 'Tables', icon: LayoutGrid },
+  { label: 'Tables', icon: LayoutGrid, to: '/tables' }, // opens the Tables module (icon and label are one link)
   { label: 'Coffee', icon: Coffee, notification: true },
   { label: 'Menu', icon: BookOpen, to: '/menu', divider: true },
   { label: 'Inventory', icon: Box, notification: true },

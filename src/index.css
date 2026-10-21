@@ -1,31 +1,6 @@
-@import "tailwindcss";
-@config "../tailwind.config.js";
-
-@theme inline {
-  --color-page: var(--page);
-  --color-card: var(--card);
-  --color-card-border: rgba(122, 37, 64, 0.10);
-  --color-pill-border: rgba(122, 37, 64, 0.14);
-  --color-divider: var(--divider);
-  --color-text: var(--text);
-  --color-muted: #8B8580;
-  --color-ink: #1C0A10;
-  --color-accent: #78263D;
-  --color-accent-hover: #5F1D30;
-  --color-link: var(--link);
-  --color-pink: var(--pink);
-  --color-mint: #E6F6EF;
-  --color-green: #1F8A6B;
-  --color-lilac: #E6DDF2;
-  --color-lavender: var(--lavender);
-  --color-amber: var(--amber);
-  --color-amber-dark: var(--amber-dark);
-  --color-beige: var(--beige);
-  --color-chip-grey: var(--chip-grey);
-  --color-split: var(--split);
-  --color-danger: var(--danger);
-  --font-sans: Inter, system-ui, sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   font-family: Inter, system-ui, sans-serif;

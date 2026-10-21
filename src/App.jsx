@@ -21,6 +21,11 @@ import {
 import AppShell from '@/components/layout/AppShell.jsx'
 import AddProduct from '@/components/addProduct/AddProduct.jsx'
 import MenuPage from '@/features/menu/MenuPage.jsx'
+import TablesShell from '@/features/tables/TablesShell.jsx'
+import TablesPage from '@/features/tables/TablesPage.jsx'
+import NewOrderPage from '@/features/tables/NewOrderPage.jsx'
+import TableDetailPage from '@/features/tables/TableDetailPage.jsx'
+import CheckoutPage from '@/features/tables/CheckoutPage.jsx'
 import '@/App.css'
 
 const kpiIcons = { wallet: Banknote, orders: Receipt, bag: ShoppingBag, chair: Landmark }
@@ -364,6 +369,13 @@ function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/menu" element={<MenuPage />} />
         <Route path="/menu/new" element={<AddProduct />} />
+      </Route>
+      {/* Tables module: own layout (reference sidebar) so AppShell/Sidebar stay unchanged */}
+      <Route path="/tables" element={<TablesShell />}>
+        <Route index element={<TablesPage />} />
+        <Route path="new-order" element={<NewOrderPage />} />
+        <Route path=":tableId" element={<TableDetailPage />} />
+        <Route path=":tableId/checkout" element={<CheckoutPage />} />
       </Route>
     </Routes>
   )
