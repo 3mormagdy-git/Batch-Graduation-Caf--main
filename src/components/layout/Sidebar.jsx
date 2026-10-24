@@ -29,7 +29,7 @@ const navigation = [
   { label: 'Inventory', icon: Box, notification: true },
   { label: 'Reports', icon: BarChart3 },
   { label: 'Stock', icon: Archive },
-  { label: 'Staff', icon: Users },
+  { label: 'Staff', icon: Users, to: '/staff' }, // opens the Staff & Shifts module
 ]
 
 function readExpanded() {

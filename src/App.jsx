@@ -26,6 +26,12 @@ import TablesPage from '@/features/tables/TablesPage.jsx'
 import NewOrderPage from '@/features/tables/NewOrderPage.jsx'
 import TableDetailPage from '@/features/tables/TableDetailPage.jsx'
 import CheckoutPage from '@/features/tables/CheckoutPage.jsx'
+import StaffShell from '@/features/staff/StaffShell.jsx'
+import EmployeesPage from '@/features/staff/EmployeesPage.jsx'
+import RolesPage from '@/features/staff/RolesPage.jsx'
+import ShiftsPage from '@/features/staff/ShiftsPage.jsx'
+import EmployeeFormPage from '@/features/staff/EmployeeFormPage.jsx'
+import EmployeeDetailPage from '@/features/staff/EmployeeDetailPage.jsx'
 import '@/App.css'
 
 const kpiIcons = { wallet: Banknote, orders: Receipt, bag: ShoppingBag, chair: Landmark }
@@ -376,6 +382,15 @@ function App() {
         <Route path="new-order" element={<NewOrderPage />} />
         <Route path=":tableId" element={<TableDetailPage />} />
         <Route path=":tableId/checkout" element={<CheckoutPage />} />
+      </Route>
+      {/* Staff & Shifts module: own layout (reference sidebar), same approach as Tables */}
+      <Route path="/staff" element={<StaffShell />}>
+        <Route index element={<EmployeesPage />} />
+        <Route path="roles" element={<RolesPage />} />
+        <Route path="shifts" element={<ShiftsPage />} />
+        <Route path="new" element={<EmployeeFormPage />} />
+        <Route path=":id" element={<EmployeeDetailPage />} />
+        <Route path=":id/edit" element={<EmployeeFormPage />} />
       </Route>
     </Routes>
   )
