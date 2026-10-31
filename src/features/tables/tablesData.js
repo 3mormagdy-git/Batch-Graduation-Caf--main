@@ -2,6 +2,15 @@
 // Every value below comes from the design reference; replace with API data later.
 
 export const BRANCH_NAME = 'Cairo Downtown'
+export const BRANCH_ID = 'cairo-downtown' // the branch this page shows (same id the API uses in branchIds)
+export const BRANCH_TABLE_PREFIX = 'cdt-' // API table ids look like "cdt-t09": branch prefix + table number
+
+// "cdt-t09" / "t9" / "T-09"  ->  "T-09". Only for display and for matching the sample data;
+// API calls and URLs always keep the real id.
+export function tableLabel(id) {
+  const match = String(id ?? '').match(/t[-_ ]?(\d+)$/i)
+  return match ? `T-${match[1].padStart(2, '0')}` : String(id ?? '')
+}
 export const ZONES = ['Window', 'Main Hall', 'Terrace']
 
 export const STATUS_LABEL = {

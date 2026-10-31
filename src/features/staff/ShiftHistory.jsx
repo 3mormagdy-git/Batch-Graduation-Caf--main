@@ -1,11 +1,13 @@
 import { formatDifference, formatWhole } from './staffData.js'
 
 export function DifferenceChip({ value }) {
-  const style = value === 0
+  if (value == null || !Number.isFinite(Number(value))) return <span className="text-xs text-muted">—</span>
+  const numericValue = Number(value)
+  const style = numericValue === 0
     ? { box: 'bg-success-soft text-success', dot: 'bg-success', text: 'Balanced' }
-    : value < 0
-      ? { box: 'bg-[#fbe9ea] text-danger', dot: 'bg-danger', text: formatDifference(value) }
-      : { box: 'bg-[#fbf1e0] text-[#9a6412]', dot: 'bg-amber', text: formatDifference(value) }
+    : numericValue < 0
+      ? { box: 'bg-[#fbe9ea] text-danger', dot: 'bg-danger', text: formatDifference(numericValue) }
+      : { box: 'bg-[#fbf1e0] text-[#9a6412]', dot: 'bg-amber', text: formatDifference(numericValue) }
   return (
     <span className={`inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 text-[11px] font-semibold ${style.box}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
@@ -31,14 +33,14 @@ export default function ShiftHistory({ rows }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.id} className="h-[52px] border-b border-line last:border-b-0">
-              <td className="pl-5 font-bold text-ink">{row.employee}</td>
-              <td className="text-text">{row.branch}</td>
-              <td className="whitespace-nowrap text-text">{row.period}</td>
-              <td className="text-right font-bold text-ink">{formatWhole(row.sales)}</td>
-              <td className="text-right text-muted">{formatWhole(row.expected)}</td>
-              <td className="text-right text-muted">{formatWhole(row.counted)}</td>
+          {rows.map((row, index) => (
+            <tr key={row.id || `${row.employeeId || 'shift'}-${row.period || index}`} className="h-[52px] border-b border-line last:border-b-0">
+              <td className="pl-5 font-bold text-ink">{row.employee || '—'}</td>
+              <td className="text-text">{[row.branch, row.register].filter(Boolean).join(' / ') || '—'}</td>
+              <td className="whitespace-nowrap text-text">{row.period || '—'}</td>
+              <td className="text-right font-bold text-ink">{row.sales == null ? '—' : formatWhole(row.sales)}</td>
+              <td className="text-right text-muted">{row.expected == null ? '—' : formatWhole(row.expected)}</td>
+              <td className="text-right text-muted">{row.counted == null ? '—' : formatWhole(row.counted)}</td>
               <td className="pr-5 text-right"><DifferenceChip value={row.difference} /></td>
             </tr>
           ))}

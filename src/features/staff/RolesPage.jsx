@@ -9,7 +9,7 @@ const EDITABLE_ROLES = ['cashier', 'kitchen']
 const sameSet = (a, b) => a.length === b.length && a.every((key) => b.includes(key))
 
 export default function RolesPage() {
-  const { employees, roleDefaults, saveRoleDefaults } = useStaff()
+  const { employees, roles, rolesError, roleDefaults, saveRoleDefaults } = useStaff()
   const [draft, setDraft] = useState(roleDefaults)
 
   const dirty = EDITABLE_ROLES.some((role) => !sameSet(draft[role], roleDefaults[role]))
@@ -35,6 +35,9 @@ export default function RolesPage() {
       />
       <StaffTabs />
 
+      {rolesError && <p role="alert" className="mt-3 text-xs text-danger">{rolesError}</p>}
+      {roles.length > 0 && <p className="mt-3 text-xs text-muted">Backend roles: {roles.map((role) => typeof role === 'string' ? role : role.name || role.role || role.label).filter(Boolean).join(', ')}</p>}
+      <p className="mt-2 text-xs text-muted">Global role defaults below are saved in this browser only; the backend currently documents read-only role definitions. Employee-specific permissions are saved through employee updates.</p>
       <section className={`${cardClass} mt-4 overflow-x-auto`}>
         <table className="w-full min-w-[640px] border-collapse text-left text-[13px]">
           <thead>

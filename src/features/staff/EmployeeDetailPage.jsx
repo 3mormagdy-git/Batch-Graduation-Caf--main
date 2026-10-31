@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Check, Mail, Pencil, Phone, X } from 'lucide-react'
 import { BackLink, PageContainer, PageTitle, cardClass } from '@/features/tables/shared.jsx'
-import { BRANCHES, PERMISSIONS } from './staffData.js'
+import { PERMISSIONS } from './staffData.js'
+import { useBranches } from '@/features/branches/BranchContext.jsx'
 import { useStaff } from './StaffContext.jsx'
 import ShiftHistory from './ShiftHistory.jsx'
 import { Avatar, RoleChip, StatusChip, btn, btnOutline } from './ui.jsx'
@@ -9,20 +11,25 @@ import { Avatar, RoleChip, StatusChip, btn, btnOutline } from './ui.jsx'
 export default function EmployeeDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { employees, history, setEmployeeStatus } = useStaff()
+  const { employees, history, setEmployeeStatus, fetchEmployee, refreshShifts, employeesLoading, employeeDetailLoading, employeesError } = useStaff()
+  const { branches } = useBranches()
   const employee = employees.find((item) => item.id === id)
+  useEffect(() => { if (id && !employee) fetchEmployee(id) }, [id, employee, fetchEmployee])
+  useEffect(() => { if (employee) refreshShifts(undefined, { employeeId: id }) }, [id, employee, refreshShifts])
 
+  if (!employee && (employeesLoading || employeeDetailLoading)) return <PageContainer><BackLink to="/staff">Employees</BackLink><PageTitle title="Loading employee…" /></PageContainer>
   if (!employee) {
     return (
       <PageContainer>
         <BackLink to="/staff">Employees</BackLink>
         <PageTitle title="Employee not found" />
+        {employeesError && <p role="alert" className="text-sm text-danger">{employeesError}</p>}
       </PageContainer>
     )
   }
 
   const active = employee.status === 'active'
-  const shifts = history.filter((row) => row.employee === employee.name)
+  const shifts = history.filter((row) => String(row.employeeId) === String(employee.id) || row.employee === employee.name)
 
   return (
     <PageContainer>
@@ -54,10 +61,10 @@ export default function EmployeeDetailPage() {
             <h2 className="m-0 mb-3 text-sm font-bold text-ink">Branch access</h2>
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
               {employee.branches.map((branchId) => {
-                const branch = BRANCHES.find((item) => item.id === branchId)
-                return branch && (
+                const branch = branches.find((item) => item.id === branchId)
+                return (
                   <li key={branchId} className="flex items-center justify-between rounded-lg bg-page px-3 py-2.5 text-[13px] text-ink">
-                    {branch.name}<span className="text-xs text-muted">{branch.code}</span>
+                    {branch?.name || branchId}<span className="text-xs text-muted">{branch?.code || ''}</span>
                   </li>
                 )
               })}
@@ -68,9 +75,9 @@ export default function EmployeeDetailPage() {
         <div className="flex flex-col gap-3.5">
           <section className={`${cardClass} p-5`}>
             <h2 className="m-0 text-[15px] font-bold text-ink">Permissions</h2>
-            <p className="m-0 mt-0.5 text-xs text-muted">{employee.permissions.length} of {PERMISSIONS.length} granted</p>
+            <p className="m-0 mt-0.5 text-xs text-muted">{employee.permissions.length} permissions assigned</p>
             <ul className="m-0 mt-4 grid list-none gap-x-6 gap-y-2.5 p-0 sm:grid-cols-2">
-              {PERMISSIONS.map((permission) => {
+              {employee.permissions.map((key) => ({ key, label: PERMISSIONS.find((p) => p.key === key)?.label || key })).map((permission) => {
                 const granted = employee.permissions.includes(permission.key)
                 return (
                   <li key={permission.key} className={`flex items-center gap-2.5 text-[13px] ${granted ? 'text-ink' : 'text-muted'}`}>

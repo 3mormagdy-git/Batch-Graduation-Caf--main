@@ -32,7 +32,7 @@ const ROLE_STYLE = {
   kitchen: 'bg-[#fbf1e0] text-[#9a6412]',
 }
 export function RoleChip({ role }) {
-  return <span className={`inline-flex h-6 items-center rounded-md px-2.5 text-[11px] font-semibold ${ROLE_STYLE[role]}`}>{ROLES[role].label}</span>
+  return <span className={`inline-flex h-6 items-center rounded-md px-2.5 text-[11px] font-semibold ${ROLE_STYLE[role] || 'bg-sand text-ink'}`}>{ROLES[role]?.label || role}</span>
 }
 
 export function StatusChip({ active }) {

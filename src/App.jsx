@@ -21,17 +21,24 @@ import {
 import AppShell from '@/components/layout/AppShell.jsx'
 import AddProduct from '@/components/addProduct/AddProduct.jsx'
 import MenuPage from '@/features/menu/MenuPage.jsx'
-import TablesShell from '@/features/tables/TablesShell.jsx'
+import SignInPage from '@/features/auth/SignInPage.jsx'
+import SignUpPage from '@/features/auth/SignUpPage.jsx'
+import ForgotPasswordPage from '@/features/auth/ForgotPasswordPage.jsx'
+import { GuestOnly, RequireAuth } from '@/features/auth/RouteGuards.jsx'
+import { useAuth } from '@/context/AuthContext.jsx'
 import TablesPage from '@/features/tables/TablesPage.jsx'
 import NewOrderPage from '@/features/tables/NewOrderPage.jsx'
 import TableDetailPage from '@/features/tables/TableDetailPage.jsx'
 import CheckoutPage from '@/features/tables/CheckoutPage.jsx'
-import StaffShell from '@/features/staff/StaffShell.jsx'
 import EmployeesPage from '@/features/staff/EmployeesPage.jsx'
 import RolesPage from '@/features/staff/RolesPage.jsx'
 import ShiftsPage from '@/features/staff/ShiftsPage.jsx'
 import EmployeeFormPage from '@/features/staff/EmployeeFormPage.jsx'
 import EmployeeDetailPage from '@/features/staff/EmployeeDetailPage.jsx'
+import BranchesPage from '@/features/branches/BranchesPage.jsx'
+import BranchDetailsPage from '@/features/branches/BranchDetailsPage.jsx'
+import BranchFormPage from '@/features/branches/BranchFormPage.jsx'
+import ReportsPage from '@/features/reports/ReportsPage.jsx'
 import '@/App.css'
 
 const kpiIcons = { wallet: Banknote, orders: Receipt, bag: ShoppingBag, chair: Landmark }
@@ -73,10 +80,13 @@ function RangeToggle({ range, onRangeChange }) {
 }
 
 function Greeting({ range, onRangeChange }) {
+  const { user } = useAuth()
+  // Falls back to the demo name when nobody is signed in (only possible with the guard off).
+  const firstName = user?.fullName?.split(' ')[0] ?? 'Salma'
   return (
     <div className="greeting-row">
       <div>
-        <h1>Good evening, Salma</h1>
+        <h1>Good evening, {firstName}</h1>
         <p>Zamalek <span>•</span> Wednesday 14 October</p>
       </div>
       <RangeToggle range={range} onRangeChange={onRangeChange} />
@@ -371,26 +381,35 @@ export function DashboardPage() {
 function App() {
   return (
     <Routes>
-      <Route element={<AppShell />}>
+      {/* Auth pages are full screen (no sidebar/header). */}
+      <Route path="/signin" element={<GuestOnly><SignInPage /></GuestOnly>} />
+      <Route path="/signup" element={<GuestOnly><SignUpPage /></GuestOnly>} />
+      <Route path="/forgot-password" element={<GuestOnly><ForgotPasswordPage /></GuestOnly>} />
+      <Route element={<RequireAuth><AppShell /></RequireAuth>}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/menu" element={<MenuPage />} />
         <Route path="/menu/new" element={<AddProduct />} />
-      </Route>
-      {/* Tables module: own layout (reference sidebar) so AppShell/Sidebar stay unchanged */}
-      <Route path="/tables" element={<TablesShell />}>
-        <Route index element={<TablesPage />} />
-        <Route path="new-order" element={<NewOrderPage />} />
-        <Route path=":tableId" element={<TableDetailPage />} />
-        <Route path=":tableId/checkout" element={<CheckoutPage />} />
-      </Route>
-      {/* Staff & Shifts module: own layout (reference sidebar), same approach as Tables */}
-      <Route path="/staff" element={<StaffShell />}>
-        <Route index element={<EmployeesPage />} />
-        <Route path="roles" element={<RolesPage />} />
-        <Route path="shifts" element={<ShiftsPage />} />
-        <Route path="new" element={<EmployeeFormPage />} />
-        <Route path=":id" element={<EmployeeDetailPage />} />
-        <Route path=":id/edit" element={<EmployeeFormPage />} />
+        <Route path="/branches" element={<BranchesPage />} />
+        <Route path="/branches/new" element={<BranchFormPage />} />
+        <Route path="/branches/:id" element={<BranchDetailsPage />} />
+        <Route path="/branches/:id/edit" element={<BranchFormPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        {/* Tables and Staff share the AppShell layout route so the Sidebar/Header stay mounted
+            while navigating between modules (TablesShell/StaffShell are no longer needed here). */}
+        <Route path="/tables">
+          <Route index element={<TablesPage />} />
+          <Route path="new-order" element={<NewOrderPage />} />
+          <Route path=":tableId" element={<TableDetailPage />} />
+          <Route path=":tableId/checkout" element={<CheckoutPage />} />
+        </Route>
+        <Route path="/staff">
+          <Route index element={<EmployeesPage />} />
+          <Route path="roles" element={<RolesPage />} />
+          <Route path="shifts" element={<ShiftsPage />} />
+          <Route path="new" element={<EmployeeFormPage />} />
+          <Route path=":id" element={<EmployeeDetailPage />} />
+          <Route path=":id/edit" element={<EmployeeFormPage />} />
+        </Route>
       </Route>
     </Routes>
   )

@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, ChevronRight, Utensils } from 'lucide-react'
-import { BRANCH_NAME, ORDERS, formatMoney, priceOrder } from './tablesData.js'
+import { BRANCH_NAME, ORDERS, formatMoney, priceOrder, tableLabel } from './tablesData.js'
 import { BackLink, PageContainer, PageTitle, cardClass, outlineButton, primaryButton } from './shared.jsx'
 
 const STEPS = ['Review total', 'Payment method', 'Confirm', 'Done']
@@ -11,7 +11,7 @@ const STEPS = ['Review total', 'Payment method', 'Confirm', 'Done']
 export default function CheckoutPage() {
   const { tableId } = useParams()
   const navigate = useNavigate()
-  const order = ORDERS[tableId]
+  const order = ORDERS[tableLabel(tableId)]
 
   // Tables without an order have nothing to check out.
   if (!order) return <Navigate to={`/tables/${tableId}`} replace />
@@ -51,7 +51,7 @@ export default function CheckoutPage() {
                 <p className="m-0 mt-1 text-xs text-muted">{BRANCH_NAME}</p>
               </div>
               <span className="inline-flex h-6 items-center gap-1.5 rounded-md bg-primary-soft px-2.5 text-xs font-semibold text-accent">
-                <Utensils size={13} aria-hidden="true" />Dine-in • {tableId}
+                <Utensils size={13} aria-hidden="true" />Dine-in • {tableLabel(tableId)}
               </span>
             </div>
             <ul className="m-0 list-none p-0 px-5">

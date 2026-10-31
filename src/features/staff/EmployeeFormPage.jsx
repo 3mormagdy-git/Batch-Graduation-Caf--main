@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Check, ChefHat, Crown, Monitor } from 'lucide-react'
 import { BackLink, PageContainer, PageTitle, cardClass } from '@/features/tables/shared.jsx'
-import { ALL_PERMISSIONS, BRANCHES, PERMISSIONS, ROLES } from './staffData.js'
+import { PERMISSIONS, ROLES } from './staffData.js'
+import { useBranches } from '@/features/branches/BranchContext.jsx'
 import { useStaff } from './StaffContext.jsx'
 import { btn, btnOutline, checkboxClass, inputClass } from './ui.jsx'
 
 const STEPS = ['Details', 'Role', 'Branches', 'Permissions']
 const ROLE_ICON = { manager: Crown, cashier: Monitor, kitchen: ChefHat }
-const EMPTY = { name: '', email: '', phone: '', pin: '', role: '', branches: [], permissions: [] }
+const EMPTY = { name: '', email: '', phone: '', password: '', role: '', branches: [], permissions: [] }
 
 function Stepper({ step }) {
   return (
@@ -49,22 +50,30 @@ function Field({ label, error, hint, children }) {
 export default function EmployeeFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { employees, roleDefaults, addEmployee, updateEmployee } = useStaff()
+  const { employees, roles, roleDefaults, createEmployee, updateEmployee, fetchEmployee, employeesLoading, employeeDetailLoading, employeesError, saving } = useStaff()
+  const { branches, loading: branchesLoading, loadError: branchesError } = useBranches()
   const editing = employees.find((employee) => employee.id === id)
   const isEdit = Boolean(id)
 
   const [step, setStep] = useState(0)
-  const [form, setForm] = useState(() => (editing ? {
-    name: editing.name, email: editing.email, phone: editing.phone, pin: editing.pin || '',
-    role: editing.role, branches: editing.branches, permissions: editing.permissions,
-  } : EMPTY))
+  const [form, setForm] = useState(EMPTY)
   const [errors, setErrors] = useState({})
+  const [loadError, setLoadError] = useState('')
+  useEffect(() => { if (id && !editing) fetchEmployee(id) }, [id, editing, fetchEmployee])
+  useEffect(() => {
+    if (editing) setForm({
+      name: editing.name, email: editing.email, phone: editing.phone, password: '',
+      role: editing.role, branches: editing.branches || [], permissions: editing.permissions || [],
+      status: editing.status, hiredAt: editing.hiredAt,
+    })
+  }, [editing])
 
   if (isEdit && !editing) {
     return (
       <PageContainer>
         <BackLink to="/staff">Employees</BackLink>
-        <PageTitle title="Employee not found" />
+        <PageTitle title={(employeesLoading || employeeDetailLoading) ? "Loading employee…" : "Employee not found"} />
+        {employeesError && <p role="alert" className="text-sm text-danger">{employeesError}</p>}
       </PageContainer>
     )
   }
@@ -72,6 +81,18 @@ export default function EmployeeFormPage() {
   const set = (patch) => setForm((current) => ({ ...current, ...patch }))
   const field = (name) => (event) => { set({ [name]: event.target.value }); setErrors((current) => ({ ...current, [name]: '' })) }
   const back = isEdit ? `/staff/${id}` : '/staff'
+  const apiPermissions = roles.flatMap((item) => Array.isArray(item?.permissions) ? item.permissions : [])
+    .map((permission) => typeof permission === 'string'
+      ? { key: permission, label: permission, group: 'Backend' }
+      : { key: permission.key || permission.code || permission.name, label: permission.label || permission.name || permission.key || permission.code, group: permission.group || 'Backend' })
+    .filter((permission) => permission.key)
+  const dynamicPermissions = [...apiPermissions, ...form.permissions.map((key) => ({ key, label: key, group: 'Employee' }))]
+  const permissionOptions = [...PERMISSIONS, ...dynamicPermissions.filter((item, index) => !PERMISSIONS.some((known) => known.key === item.key) && dynamicPermissions.findIndex((other) => other.key === item.key) === index)]
+  const roleOptions = roles.length ? roles.map((item) => {
+    const apiValue = typeof item === 'string' ? item : item.name || item.role || item.value || ''
+    const key = ({ Manager: 'manager', Cashier: 'cashier', 'Kitchen Staff': 'kitchen' })[apiValue] || String(apiValue).toLowerCase()
+    return { key, label: typeof item === 'object' ? (item.label || item.name || item.role || apiValue) : item, description: item.description || ROLES[key]?.description || '' }
+  }).filter((item) => item.key) : Object.entries(ROLES).map(([key, value]) => ({ key, ...value }))
 
   const validate = () => {
     const next = {}
@@ -80,7 +101,7 @@ export default function EmployeeFormPage() {
       if (!form.email.trim()) next.email = 'Work email is required.'
       else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Enter a valid email address.'
       if (!form.phone.trim()) next.phone = 'Phone is required.'
-      if (!form.pin.trim()) next.pin = 'Register PIN is required.'
+      if (!isEdit && !form.password.trim()) next.password = 'Password is required.'
     }
     if (step === 1 && !form.role) next.role = 'Select a role.'
     if (step === 2 && form.branches.length === 0) next.branches = 'Assign at least one branch.'
@@ -92,25 +113,33 @@ export default function EmployeeFormPage() {
 
   const chooseRole = (role) => {
     // Picking a different role loads that role's default permissions.
-    if (role !== form.role) set({ role, permissions: roleDefaults[role] })
+    if (role !== form.role) {
+      const apiRole = roles.find((item) => {
+        const value = typeof item === 'string' ? item : item.name || item.role || item.value
+        return String(value).toLowerCase() === String(role).toLowerCase() || ({ Manager: 'manager', Cashier: 'cashier', 'Kitchen Staff': 'kitchen' })[value] === role
+      })
+      const defaults = Array.isArray(apiRole?.permissions) ? apiRole.permissions.map((permission) => typeof permission === 'string' ? permission : (permission.key || permission.code || permission.name)).filter(Boolean) : (roleDefaults[role] || [])
+      set({ role, permissions: defaults })
+    }
     setErrors({})
   }
   const toggle = (name, value) => set({
     [name]: form[name].includes(value) ? form[name].filter((item) => item !== value) : [...form[name], value],
   })
 
-  const save = () => {
+  const save = async () => {
+    setLoadError('')
     const data = {
-      name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), pin: form.pin.trim(),
+      name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(),
+      ...(form.password.trim() ? { password: form.password.trim() } : {}),
       role: form.role, branches: form.branches,
-      permissions: form.role === 'manager' ? ALL_PERMISSIONS : form.permissions,
+      permissions: form.role === 'manager' ? permissionOptions.map((permission) => permission.key) : form.permissions,
+      status: form.status || 'active',
+      hiredAt: form.hiredAt || new Date().toISOString().slice(0, 10),
     }
-    if (isEdit) {
-      updateEmployee(id, data)
-      navigate(`/staff/${id}`)
-    } else {
-      navigate(`/staff/${addEmployee(data).id}`)
-    }
+    const saved = isEdit ? await updateEmployee(id, data) : await createEmployee(data)
+    if (!saved) { setLoadError('The employee could not be saved. Review the server error and try again.'); return }
+    navigate(isEdit ? `/staff/${id}` : `/staff/${saved.id}`)
   }
 
   return (
@@ -128,7 +157,7 @@ export default function EmployeeFormPage() {
                 <Field label="Full name" error={errors.name}><input className={inputClass} placeholder="Laila Hamdy" value={form.name} onChange={field('name')} /></Field>
                 <Field label="Work email" error={errors.email}><input className={inputClass} type="email" placeholder="laila@nahj.cafe" value={form.email} onChange={field('email')} /></Field>
                 <Field label="Phone" error={errors.phone}><input className={inputClass} type="tel" placeholder="+20 1xx xxx xxxx" value={form.phone} onChange={field('phone')} /></Field>
-                <Field label="Register PIN" error={errors.pin} hint="Used to sign in at the POS"><input className={inputClass} type="password" inputMode="numeric" autoComplete="off" value={form.pin} onChange={field('pin')} /></Field>
+                <Field label={isEdit ? "New password (optional)" : "Password"} error={errors.password} hint={isEdit ? "Leave blank to keep the current password." : "Used for employee account access."}><input className={inputClass} type="password" autoComplete="new-password" value={form.password} onChange={field('password')} /></Field>
               </div>
             </>
           )}
@@ -137,8 +166,9 @@ export default function EmployeeFormPage() {
             <>
               <h2 className="m-0 mb-4 text-[15px] font-bold text-ink">Select role</h2>
               <div className="grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Role">
-                {Object.entries(ROLES).map(([key, role]) => {
-                  const Icon = ROLE_ICON[key]
+                {roleOptions.map((role) => {
+                  const key = role.key
+                  const Icon = ROLE_ICON[key] || Monitor
                   const selected = form.role === key
                   return (
                     <button
@@ -163,8 +193,8 @@ export default function EmployeeFormPage() {
           {step === 2 && (
             <>
               <h2 className="m-0 mb-4 text-[15px] font-bold text-ink">Assign branches</h2>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {BRANCHES.map((branch) => {
+              {branchesLoading ? <p className="text-sm text-muted">Loading branches…</p> : branchesError ? <p role="alert" className="text-sm text-danger">{branchesError}</p> : <div className="grid gap-3 sm:grid-cols-3">
+                {branches.map((branch) => {
                   const selected = form.branches.includes(branch.id)
                   return (
                     <label key={branch.id} className={`flex cursor-pointer items-start gap-2.5 rounded-xl border px-3.5 py-3 ${selected ? 'border-accent bg-primary-soft' : 'border-line bg-card hover:bg-page'}`}>
@@ -176,7 +206,7 @@ export default function EmployeeFormPage() {
                     </label>
                   )
                 })}
-              </div>
+              </div>}
               {errors.branches && <p className="m-0 mt-2 text-xs text-danger">{errors.branches}</p>}
             </>
           )}
@@ -185,7 +215,7 @@ export default function EmployeeFormPage() {
             <>
               <h2 className="m-0 mb-4 text-[15px] font-bold text-ink">Set permissions</h2>
               <div className="grid gap-3 sm:grid-cols-2">
-                {PERMISSIONS.map((permission) => {
+                {permissionOptions.map((permission) => {
                   const isDefault = roleDefaults[form.role]?.includes(permission.key)
                   const locked = form.role === 'manager' // managers always have full access
                   return (
@@ -208,13 +238,15 @@ export default function EmployeeFormPage() {
             </>
           )}
 
+          {loadError && <p role="alert" className="m-0 mt-3 text-sm text-danger">{loadError}</p>}
+          {employeesError && <p role="alert" className="m-0 mt-2 text-sm text-danger">{employeesError}</p>}
           <div className="mt-5 flex items-center justify-between">
             {step === 0
               ? <button type="button" className={btnOutline} onClick={() => navigate(back)}>Cancel</button>
               : <button type="button" className={btnOutline} onClick={() => setStep((value) => value - 1)}>Back</button>}
             {step < 3
               ? <button type="button" className={btn} onClick={next}>Continue</button>
-              : <button type="button" className={btn} onClick={save}>Save employee</button>}
+              : <button type="button" className={btn} disabled={saving || branchesLoading || branches.length === 0} onClick={save}>{saving ? "Saving…" : "Save employee"}</button>}
           </div>
         </section>
       </div>
